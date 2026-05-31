@@ -3,4 +3,4 @@ Projects, assignments, and learning outcomes from the IDEAS Technology Innovatio
 <br>
 ## Author
 Shreya Nair  
-BSc Applied Statistics and Data Analutics, MIT-WPU
+BSc Applied Statistics and Data Analytics, MIT-WPU
