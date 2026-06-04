@@ -1,5 +1,5 @@
 # Ideas-TIH-2026
-Projects, assignments, and learning outcomes from the IDEAS Technology Innovation Hub Summer Internship 2026
+Projects and assignments from the IDEAS Technology Innovation Hub Summer Internship 2026
 <br>
 # Objective
 The objective of this project is to predict student performance categories using machine learning techniques based on academic, behavioral, and personal factors. The study aims to understand how different attributes contribute to a student's overall performance.
