@@ -1,58 +1,14 @@
 #--------------QUESTION 1-----------------
 
-import pandas as pd
-import zipfile
-import os
-
-#Path to the downloaded ZIP file
-zip_path = r"C:\Users\shrey\Downloads\archive.zip"
-
-# Extract the ZIP contents
-extract_folder = r"C:\Users\shrey\Downloads\student_dataset"
-
-with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-    zip_ref.extractall(extract_folder)
-
-# Show files extracted from the ZIP
-print("Files in ZIP:")
-print(os.listdir(extract_folder))
-
-# Replace the filename below with the actual CSV file name if needed
-csv_file = os.path.join(extract_folder, "student_performance_dataset.csv")
-
-# Load the dataset
-df = pd.read_csv(csv_file)
-
-# Display first 5 rows
-df.head(5)
+df = pd.read_excel('student_performance_dataset.csv.xlsx')
+print(df.head())
 
 #--------------QUESTION 2------------------------
 
 import pandas as pd
-import zipfile
-import os
-
-# Path to the downloaded ZIP file
-zip_path = r"C:\Users\shrey\Downloads\archive.zip"
-
-# Extract the ZIP contents
-extract_folder = r"C:\Users\shrey\Downloads\student_dataset"
-
-with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-    zip_ref.extractall(extract_folder)
-
-# Show files extracted from the ZIP
-print("Files in ZIP:")
-print(os.listdir(extract_folder))
-
-# Replace the filename below with the actual CSV file name if needed
-csv_file = os.path.join(extract_folder, "student_performance_dataset.csv")
-
-# Load the dataset
-df = pd.read_csv(csv_file)
 
 # Numerical columns
-numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns.tolist()
+numerical_cols = df.select_dtypes(include=['number']).columns.tolist()
 
 # Categorical columns
 categorical_cols = df.select_dtypes(include=['object']).columns.tolist()
@@ -65,39 +21,48 @@ print(categorical_cols)
 
 #--------------QUESTION 3---------------------------
 
-print(df.isnull().sum())
+missing_values = df.isnull().sum()
+
+print("Missing values in each column:")
+print(missing_values)
 
 #--------------QUESTION 4---------------------------
 
-# Fill missing numerical values with median
-num_cols = df.select_dtypes(include='number').columns
-for col in num_cols:
-    df[col].fillna(df[col].median(), inplace=True)
+# Fill numerical columns with median
+for col in df.select_dtypes(include=['number']).columns:
+    df[col] = df[col].fillna(df[col].median())
 
-# Fill missing categorical values with mode
-cat_cols = df.select_dtypes(exclude='number').columns
-for col in cat_cols:
-    df[col].fillna(df[col].mode()[0], inplace=True)
+# Fill categorical columns with mode
+for col in df.select_dtypes(include=['object']).columns:
+    df[col] = df[col].fillna(df[col].mode()[0])
 
-# Print total missing values remaining
-print("Total missing values remaining:", df.isnull().sum().sum())
+# Check remaining missing values
+remaining_missing = df.isnull().sum().sum()
+
+print("Total missing values remaining:", remaining_missing)
 
 #--------------QUESTION 5-------------------------
 
 from sklearn.preprocessing import LabelEncoder
 
-categorical_cols = df.select_dtypes(include='object').columns
+# Create LabelEncoder object
+le = LabelEncoder()
 
+# Get categorical columns
+categorical_cols = df.select_dtypes(include=['object']).columns
+
+# Apply Label Encoding to each categorical column
 for col in categorical_cols:
-    df[col] = LabelEncoder().fit_transform(df[col])
+    df[col] = le.fit_transform(df[col])
 
+# Display first 5 rows
 print(df.head())
 
 #--------------QUESTION 6-------------------------
 
 # Separate features and target
-X = df.drop("performance_category", axis=1)
-y = df["performance_category"]
+X = df.drop('performance_category', axis=1)
+y = df['performance_category']
 
 # Print shapes
 print("Shape of X:", X.shape)
@@ -107,103 +72,60 @@ print("Shape of y:", y.shape)
 
 from sklearn.model_selection import train_test_split
 
-# Separate features and target
-X = df.drop("performance_category", axis=1)
-y = df["performance_category"]
-
-# Train-test split (80% train, 20% test)
+# Split the dataset
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+    X, y,
+    test_size=0.20,
+    random_state=42
 )
 
 # Print shapes
-print("X_train shape:", X_train.shape)
-print("X_test shape:", X_test.shape)
+print("Shape of X_train:", X_train.shape)
+print("Shape of X_test:", X_test.shape)
 
 #--------------QUESTION 8---------------------------
 
 from sklearn.preprocessing import MinMaxScaler
 
-# Split features and target
-X = df.drop("performance_category", axis=1)
-y = df["performance_category"]
-
-# Train-test split
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
-
-# Initialize scaler
+# Create scaler
 scaler = MinMaxScaler()
 
-# Fit on training data and transform
+# Fit on training data and transform both sets
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# Convert back to DataFrame (optional but useful)
-X_train_scaled = pd.DataFrame(X_train_scaled, columns=X_train.columns)
-
-# Print min and max values
-print("Min value in scaled X_train:", X_train_scaled.min().min())
-print("Max value in scaled X_train:", X_train_scaled.max().max())
+# Print min and max values of scaled training data
+print("Minimum value in X_train_scaled:", X_train_scaled.min())
+print("Maximum value in X_train_scaled:", X_train_scaled.max())
 
 #--------------QUESTION 9------------------------------
 
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 
-# Split features and target
-X = df.drop("performance_category", axis=1)
-y = df["performance_category"]
+# Initialize the model
+dt_model = DecisionTreeClassifier(random_state=42)
 
-# Train-test split
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
+# Train the model
+dt_model.fit(X_train_scaled, y_train)
 
-# Scale features (optional but consistent with previous step)
-scaler = MinMaxScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
+# Make predictions
+y_pred = dt_model.predict(X_test_scaled)
 
-# Initialize and train model
-model = DecisionTreeClassifier(random_state=42)
-model.fit(X_train, y_train)
-
-# Predictions
-y_pred = model.predict(X_test)
-
-# Accuracy
+# Calculate accuracy
 accuracy = accuracy_score(y_test, y_pred)
 
-print(accuracy)
+print("Accuracy Score:", accuracy)
 
 #--------------QUESTION 10----------------------------
 
-# Split features and target
-X = df.drop("performance_category", axis=1)
-y = df["performance_category"]
+# Get feature importances
+feature_importance = pd.Series(
+    dt_model.feature_importances_,
+    index=X.columns
+).sort_values(ascending=False)
 
-# Train-test split
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
-
-# Scale features
-scaler = MinMaxScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
-
-# Train model
-model = DecisionTreeClassifier(random_state=42)
-model.fit(X_train, y_train)
-
-# Feature importance
-importances = model.feature_importances_
-
-# Convert to Series for better readability
-feature_importance = pd.Series(importances, index=X.columns)
-
+# Print feature importances
 print(feature_importance)
 
 #----------------------------------------------
