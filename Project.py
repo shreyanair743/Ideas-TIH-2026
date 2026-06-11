@@ -1,11 +1,10 @@
 #--------------QUESTION 1-----------------
 
+import pandas as pd
 df = pd.read_excel('student_performance_dataset.csv.xlsx')
 print(df.head())
 
 #--------------QUESTION 2------------------------
-
-import pandas as pd
 
 # Numerical columns
 numerical_cols = df.select_dtypes(include=['number']).columns.tolist()
