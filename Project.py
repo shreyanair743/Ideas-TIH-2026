@@ -1,10 +1,10 @@
-#--------------QUESTION 1-----------------
+#--------------Loading the dataset-----------------
 
 import pandas as pd
 df = pd.read_excel('student_performance_dataset.csv.xlsx')
 print(df.head())
 
-#--------------QUESTION 2------------------------
+#--------------Identifying column types------------------------
 
 # Numerical columns
 numerical_cols = df.select_dtypes(include=['number']).columns.tolist()
@@ -18,14 +18,14 @@ print(numerical_cols)
 print("\nCategorical Columns:")
 print(categorical_cols)
 
-#--------------QUESTION 3---------------------------
+#--------------Missing Values---------------------------
 
 missing_values = df.isnull().sum()
 
 print("Missing values in each column:")
 print(missing_values)
 
-#--------------QUESTION 4---------------------------
+#--------------Data Imputation---------------------------
 
 # Fill numerical columns with median
 for col in df.select_dtypes(include=['number']).columns:
@@ -40,7 +40,7 @@ remaining_missing = df.isnull().sum().sum()
 
 print("Total missing values remaining:", remaining_missing)
 
-#--------------QUESTION 5-------------------------
+#--------------Label Encoding-------------------------
 
 from sklearn.preprocessing import LabelEncoder
 
@@ -57,7 +57,7 @@ for col in categorical_cols:
 # Display first 5 rows
 print(df.head())
 
-#--------------QUESTION 6-------------------------
+#--------------Feature and Target Separation-------------------------
 
 # Separate features and target
 X = df.drop('performance_category', axis=1)
@@ -67,7 +67,7 @@ y = df['performance_category']
 print("Shape of X:", X.shape)
 print("Shape of y:", y.shape)
 
-#--------------QUESTION 7---------------------------
+#--------------Train Test Spilt---------------------------
 
 from sklearn.model_selection import train_test_split
 
@@ -82,7 +82,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 print("Shape of X_train:", X_train.shape)
 print("Shape of X_test:", X_test.shape)
 
-#--------------QUESTION 8---------------------------
+#--------------Feature Scaling---------------------------
 
 from sklearn.preprocessing import MinMaxScaler
 
@@ -97,7 +97,7 @@ X_test_scaled = scaler.transform(X_test)
 print("Minimum value in X_train_scaled:", X_train_scaled.min())
 print("Maximum value in X_train_scaled:", X_train_scaled.max())
 
-#--------------QUESTION 9------------------------------
+#--------------Decision Tree Classifier------------------------------
 
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
@@ -116,7 +116,7 @@ accuracy = accuracy_score(y_test, y_pred)
 
 print("Accuracy Score:", accuracy)
 
-#--------------QUESTION 10----------------------------
+#--------------Feature Importance----------------------------
 
 # Get feature importances
 feature_importance = pd.Series(
